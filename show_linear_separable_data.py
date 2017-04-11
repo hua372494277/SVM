@@ -19,8 +19,8 @@ def gen_lin_separable_data(n_samples):
 
 def gen_3_lin_separable_data(n_samples):
     # generate training data in the 3-d case
-    mean1 = np.array([0, 2, 1])
-    mean2 = np.array([2, 0, 1])
+    mean1 = np.array([0, 2, 2])
+    mean2 = np.array([2, 0, -2])
     cov = np.array([[2, 0.6, 0.8], [0.6, 2, -0.6], [0.8, -0.6, 2]])
     x1, y1, z1 = np.random.multivariate_normal(mean1, cov, n_samples).T
 
@@ -30,7 +30,7 @@ def gen_3_lin_separable_data(n_samples):
     fig = plt.figure()
 
     ax = fig.add_subplot(111, projection = '3d')
-    
+
     # print x1
     # print y1
     # print z1
