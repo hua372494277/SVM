@@ -2,6 +2,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+'''
+Generate dataset including n_samples points
+from multivariate normal distribution
+with the provided mean, cov
+'''
 def gen_multivariate_normalData(mean, cov, n_samples):
     # the output of mean.shape is (nL,)
     (n_variates, ) = mean.shape
@@ -16,13 +21,13 @@ Parameter:
     n_samples = # of positive data + # of negative data
 Return:
     pos_dataset
-    pos_label 
+    pos_label
     neg_dataset
     neg_label
 '''
 def generate_pos_neg_dataset(n_samples = 500):
     # 1 generate the positive data set
-    pos_mean = np.array([0, 2])    
+    pos_mean = np.array([0, 2])
     pos_cov = np.array([[0.8, 0.6], [0.6, 0.8]])
     pos_dataset = gen_multivariate_normalData(mean = pos_mean, \
                                                 cov = pos_cov, \
@@ -30,7 +35,7 @@ def generate_pos_neg_dataset(n_samples = 500):
     pos_label = np.ones(n_samples / 2)
 
     # 2 generate the negative data set
-    neg_mean = np.array([2, 0])    
+    neg_mean = np.array([2, 0])
     neg_cov = np.array([[0.8, 0.6], [0.6, 0.8]])
     neg_dataset = gen_multivariate_normalData(mean = neg_mean, \
                                                 cov = neg_cov, \
@@ -52,11 +57,27 @@ Return:
     test_label
 '''
 def generate_train_test_dataset(pos_dataset, pos_label, neg_dataset, neg_label, percent = 0.9):
+    n_samples = len(pos_dataset)
+    n_training_samples = n_samples * percent
+    training_dataset = np.vstack( (pos_dataset[:n_training_samples], neg_dataset[:n_training_samples]) )
+    training_label = np.hstack( (pos_label[:n_training_samples], neg_label[:n_training_samples]) )
+    test_dataset = np.vstack( (pos_dataset[n_training_samples:], neg_dataset[n_training_samples:]) )
+    test_label = np.hstack( (pos_label[n_training_samples:], neg_label[n_training_samples:]) )
 
-    return training_set, test_set
+    return training_dataset, training_label, test_dataset, test_label
 
 if __name__ == "__main__":
-    pos_dataset, pos_label, neg_dataset, neg_label = generate_pos_neg_dataset(n_samples = 2000)
+    pos_dataset, pos_label, neg_dataset, neg_label = generate_pos_neg_dataset(n_samples = 20)
+    print pos_dataset, "\n", neg_dataset
+    
+    training_dataset, training_label, test_dataset, test_label = \
+        generate_train_test_dataset(pos_dataset, pos_label, neg_dataset, neg_label)
+
+    print training_dataset
+    print training_label
+    print test_dataset
+    print test_label
+
     # print pos_dataset
     # print pos_label
 
