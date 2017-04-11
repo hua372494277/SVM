@@ -39,19 +39,31 @@ def generate_pos_neg_dataset(n_samples = 500):
 
     return pos_dataset, pos_label, neg_dataset, neg_label
 
-#split all data into 2 sets: training set and test set
-def split_data():
+'''
+Split all data into 2 sets: training set and test set
+This function will split the # percentage of positive and negative dataset into training dataset
+And the rest data are testset.
+Parameter:
+    percent: how many positive and negative dataset will be used to training
+Return:
+    training_dataset
+    training_label
+    test_dataset
+    test_label
+'''
+def generate_train_test_dataset(pos_dataset, pos_label, neg_dataset, neg_label, percent = 0.9):
+
     return training_set, test_set
 
 if __name__ == "__main__":
     pos_dataset, pos_label, neg_dataset, neg_label = generate_pos_neg_dataset(n_samples = 2000)
-    print pos_dataset
-    print pos_label
+    # print pos_dataset
+    # print pos_label
 
-    print neg_dataset
-    print neg_label
-    # Show the distribution of data set
-    plt.plot(pos_dataset.T[0], pos_dataset.T[1], "ro")
-    plt.plot(neg_dataset.T[0], neg_dataset.T[1], "bx")
-    plt.axis('equal')
-    plt.show()
+    # print neg_dataset
+    # print neg_label
+    # # Show the distribution of data set
+    # plt.plot(pos_dataset.T[0], pos_dataset.T[1], "ro")
+    # plt.plot(neg_dataset.T[0], neg_dataset.T[1], "bx")
+    # plt.axis('equal')
+    # plt.show()
