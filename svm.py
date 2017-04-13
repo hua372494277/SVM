@@ -65,9 +65,62 @@ class svm(object):
             self.w = None
 
 
-    
+    def project(self, X):
+        if self.w is not None:
+            return np.dot(X, self.w) + b
+
+
+    def predict(self, X):
+        return np.sign( self.project(X))
 
 
 
+if __name__ = "__main__":
 
 
+
+    def plot_margin(X1_train, X2_train, clf):
+        def f(x, w, b, c=0):
+            # given x, return y such that [x,y] in on the line
+            # w.x + b = c
+            return (-w[0] * x - b + c) / w[1]
+
+        pl.plot(X1_train[:,0], X1_train[:,1], "ro")
+        pl.plot(X2_train[:,0], X2_train[:,1], "bo")
+        pl.scatter(clf.sv[:,0], clf.sv[:,1], s=100, c="g")
+
+        # w.x + b = 0
+        a0 = -4; a1 = f(a0, clf.w, clf.b)
+        b0 = 4; b1 = f(b0, clf.w, clf.b)
+        pl.plot([a0,b0], [a1,b1], "k")
+
+        # w.x + b = 1
+        a0 = -4; a1 = f(a0, clf.w, clf.b, 1)
+        b0 = 4; b1 = f(b0, clf.w, clf.b, 1)
+        pl.plot([a0,b0], [a1,b1], "k--")
+
+        # w.x + b = -1
+        a0 = -4; a1 = f(a0, clf.w, clf.b, -1)
+        b0 = 4; b1 = f(b0, clf.w, clf.b, -1)
+        pl.plot([a0,b0], [a1,b1], "k--")
+
+        pl.axis("tight")
+        pl.show()
+
+
+    def test_linear():
+        X1, y1, X2, y2 = gen_lin_separable_data()
+        X_train, y_train = split_train(X1, y1, X2, y2)
+        X_test, y_test = split_test(X1, y1, X2, y2)
+
+        clf = SVM()
+        clf.fit(X_train, y_train)
+
+        y_predict = clf.predict(X_test)
+        correct = np.sum(y_predict == y_test)
+        print "%d out of %d predictions correct" % (correct, len(y_predict))
+
+        plot_margin(X_train[y_train==1], X_train[y_train==-1], clf)
+
+
+    test_linear()
