@@ -1,11 +1,14 @@
 '''
 SVM class
 '''
+import numpy as np
+import cvxopt 
+
 def linear_kernel(x1, x2):
     return np.dot(x1, x2)
 
-class svm(object):
-    """docstring for svm"""
+class SVM(object):
+    """docstring for SVM"""
     def __init__(self, kernel=linear_kernel, C=None):
         self.kernel = kernel
         
@@ -18,20 +21,19 @@ class svm(object):
     def fit(self, features, label):
         n_samples, n_features = features.shape
 
-        K = np.zeros(n_samples. n_samples)
+        K = np.zeros( (n_samples, n_samples) )
         for i in range(n_samples):
             for j in range(n_samples):
-                K[i, j] = self.kernel(X[i], X[j])
+                K[i, j] = self.kernel(features[i], features[j])
 
-        P = cvxopt.matrix(np.outer(y,y) * K)
+        P = cvxopt.matrix(np.outer(label, label) * K)
         q = cvxopt.matrix(np.ones(n_samples) * -1 )
-        A = cvxopt.matrix(y, (1,n_samples), tc='d')
+        A = cvxopt.matrix(label, (1,n_samples), tc='d')
         b = cvxopt.matrix(0.0)
 
         if self.C is None:
             G = cvxopt.matrix( np.diag(np.ones(n_samples) * -1 ))
             h = cvxopt.matrix( np.zeros(n_samples) )
-
 
         # solve QP problem
         solution = cvxopt.solvers.qp(P, q, G, h, A, b)
@@ -43,8 +45,8 @@ class svm(object):
         sv = a > 1e-5
         ind = np.arange(len(a))[sv]
         self.a = a[sv]
-        self.sv = X[sv]
-        self.sv_y = y[sv]
+        self.sv = features[sv]
+        self.sv_y = label[sv]
 
         print "%d support vectors out of %d points" % (len(self.a), n_samples)
 
@@ -52,7 +54,7 @@ class svm(object):
         self.b = 0
         for n in range( len(self.a) ):
             self.b += self.sv_y[n]
-            self.b -= np.sum(self.a * self.sv_y * K[ind, sv])
+            self.b -= np.sum(self.a * self.sv_y * K[ind[n], sv])
 
         self.b /= len(self.a)
 
@@ -67,7 +69,7 @@ class svm(object):
 
     def project(self, X):
         if self.w is not None:
-            return np.dot(X, self.w) + b
+            return np.dot(X, self.w) + self.b
 
 
     def predict(self, X):
@@ -75,8 +77,8 @@ class svm(object):
 
 
 
-if __name__ = "__main__":
-
+if __name__ == "__main__":
+    import pylab as pl
 
 
     def plot_margin(X1_train, X2_train, clf):
@@ -91,7 +93,9 @@ if __name__ = "__main__":
 
         # w.x + b = 0
         a0 = -4; a1 = f(a0, clf.w, clf.b)
+        print a1
         b0 = 4; b1 = f(b0, clf.w, clf.b)
+        print b1
         pl.plot([a0,b0], [a1,b1], "k")
 
         # w.x + b = 1
@@ -104,14 +108,19 @@ if __name__ = "__main__":
         b0 = 4; b1 = f(b0, clf.w, clf.b, -1)
         pl.plot([a0,b0], [a1,b1], "k--")
 
-        pl.axis("tight")
+        pl.axis("equal")
         pl.show()
 
 
     def test_linear():
-        X1, y1, X2, y2 = gen_lin_separable_data()
-        X_train, y_train = split_train(X1, y1, X2, y2)
-        X_test, y_test = split_test(X1, y1, X2, y2)
+        # X1, y1, X2, y2 = gen_lin_separable_data()
+        # X_train, y_train = split_train(X1, y1, X2, y2)
+        # X_test, y_test = split_test(X1, y1, X2, y2)
+
+        X_train = np.array([[3.0, 3.0], [4.0, 3.0], [1.0, 1.0]])
+        y_train = np.array([1, 1, -1])
+        X_test = np.array([[3.0, 5.0], [0.0, 1.0] ])
+        y_test = np.array([1, -1])
 
         clf = SVM()
         clf.fit(X_train, y_train)
